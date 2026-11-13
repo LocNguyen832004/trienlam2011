@@ -1,18 +1,185 @@
 <!DOCTYPE html>
-<html lang="vi"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Tri ân thầy cô 20/11</title>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Blind box 20/11</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;700;900&display=swap" rel="stylesheet">
 <style>
-body{margin:0;background:#000;height:100vh;display:flex;align-items:center;justify-content:center}
-video{width:100%;max-height:100vh}
-#tap{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
-background:rgba(0,0,0,.35);color:#fff;font:bold 22px sans-serif;text-align:center;cursor:pointer}
-#tap span{font-size:72px;animation:p 1.2s infinite;margin-bottom:30px}
-@keyframes p{50%{transform:scale(1.2)}}
-</style></head><body>
-<video id="v" src="video.mp4" autoplay muted playsinline loop></video>
-<div id="tap"><span>🎁</span>Chạm vào màn hình để mở BLINDBOX 20/11</div>
+:root{
+  --red:#EE0033; --red-deep:#A8001F; --mist:#ECEDEF; --silver:#C9CCD1; --ink:#2A2D33; --white:#fff;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:"Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  color:var(--ink);overflow:hidden;
+  background:linear-gradient(160deg,#fff 0%,#F4F5F7 45%,#E4E6EA 100%);
+  -webkit-tap-highlight-color:transparent;
+}
+/* lưới chấm đỏ góc phải, giống poster */
+body::before{
+  content:"";position:fixed;right:-20px;top:18%;width:55vw;height:45vh;pointer-events:none;
+  background-image:radial-gradient(var(--red) 1.6px,transparent 1.8px);background-size:16px 16px;
+  -webkit-mask-image:linear-gradient(225deg,#000 0%,transparent 70%);mask-image:linear-gradient(225deg,#000 0%,transparent 70%);
+  opacity:.35;
+}
+/* ---------- Màn hộp quà ---------- */
+#splash{
+  position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:env(safe-area-inset-top) 24px env(safe-area-inset-bottom);cursor:pointer;z-index:2;
+  transition:opacity .6s ease 1s, visibility 0s linear 1.6s;
+}
+#splash.open{opacity:0;visibility:hidden}
+.title{
+  font-weight:900;color:var(--red);text-align:center;line-height:.95;letter-spacing:.02em;
+  font-size:clamp(34px,11vw,56px);
+}
+.title small{display:block;font-size:.62em;letter-spacing:.18em;margin-bottom:.15em}
+.sub{margin-top:16px;max-width:320px;font-weight:700;font-size:17px;line-height:1.45;color:var(--ink);text-align:center}
+
+.stage{position:relative;width:220px;height:250px;margin:34px 0 18px}
+/* vòng sáng dưới chân hộp */
+.floor{position:absolute;left:50%;bottom:6px;width:260px;height:60px;transform:translateX(-50%);
+  border-radius:50%;background:radial-gradient(closest-side,rgba(238,0,51,.45),rgba(238,0,51,0) 70%)}
+.floor::before,.floor::after{content:"";position:absolute;inset:8px 20px;border-radius:50%;
+  border:2px solid rgba(238,0,51,.55);animation:ring 2.4s ease-out infinite}
+.floor::after{animation-delay:1.2s}
+@keyframes ring{from{transform:scale(.55);opacity:1}to{transform:scale(1.25);opacity:0}}
+
+/* tia sáng khi mở */
+.rays{position:absolute;left:50%;top:48%;width:420px;height:420px;margin:-210px 0 0 -210px;
+  background:repeating-conic-gradient(rgba(238,0,51,.16) 0 8deg,transparent 8deg 22deg);
+  border-radius:50%;-webkit-mask-image:radial-gradient(closest-side,#000 20%,transparent);mask-image:radial-gradient(closest-side,#000 20%,transparent);
+  transform:scale(0);opacity:0;transition:transform .7s cubic-bezier(.2,.9,.3,1.2),opacity .4s}
+.open .rays{transform:scale(1) rotate(30deg);opacity:1}
+
+.box{position:absolute;left:50%;bottom:28px;width:170px;transform:translateX(-50%);
+  transform-origin:50% 100%;animation:wobble 3s ease-in-out infinite}
+.box svg{display:block;width:100%;height:auto;overflow:visible}
+.lid{transform-origin:50% 100%;transform-box:fill-box;animation:peek 3s ease-in-out infinite}
+@keyframes wobble{
+  0%,58%,100%{transform:translateX(-50%) rotate(0)}
+  64%{transform:translateX(-50%) rotate(-5deg)}
+  70%{transform:translateX(-50%) rotate(4deg)}
+  76%{transform:translateX(-50%) rotate(-3deg)}
+  82%{transform:translateX(-50%) rotate(1.5deg)}
+}
+@keyframes peek{0%,58%,88%,100%{transform:translateY(0)}68%,78%{transform:translateY(-8px)}}
+.open .box{animation:none}
+.open .lid{animation:none;transform:translate(46px,-150px) rotate(28deg);opacity:0;
+  transition:transform .75s cubic-bezier(.25,.8,.3,1),opacity .5s ease .35s}
+
+.hint{display:flex;align-items:center;gap:10px;font-weight:700;font-size:17px;color:var(--white);
+  background:var(--red);padding:13px 24px;border-radius:999px;box-shadow:0 10px 26px -10px var(--red);
+  animation:breathe 1.8s ease-in-out infinite}
+.hint svg{width:20px;height:20px}
+@keyframes breathe{50%{transform:scale(1.06)}}
+.open .hint{animation:none;opacity:0;transition:opacity .25s}
+
+/* mảnh giấy màu */
+.bit{position:fixed;width:10px;height:10px;border-radius:2px;pointer-events:none;z-index:3;
+  animation:fly 1.3s cubic-bezier(.15,.7,.4,1) forwards}
+@keyframes fly{to{transform:translate(var(--x),var(--y)) rotate(var(--r));opacity:0}}
+
+/* ---------- Màn video ---------- */
+#player{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:14px;padding:calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 16px);
+  opacity:0;transform:scale(.94);transition:opacity .8s ease 1.1s,transform .8s ease 1.1s;z-index:1}
+#player.show{opacity:1;transform:none}
+#player .tag{font-weight:900;color:var(--red);font-size:20px;letter-spacing:.06em}
+video{width:100%;max-width:520px;max-height:80vh;border-radius:16px;background:#000;
+  box-shadow:0 24px 50px -22px rgba(168,0,31,.55),0 0 0 4px var(--white)}
+
+@media (prefers-reduced-motion:reduce){
+  .box,.lid,.hint,.floor::before,.floor::after{animation:none}
+}
+</style>
+</head>
+<body>
+
+<div id="player">
+  <div class="tag">BLIND BOX 20/11</div>
+  <video id="v" src="video.mp4" playsinline preload="auto"></video>
+</div>
+
+<div id="splash" role="button" tabindex="0" aria-label="Chạm để mở hộp quà">
+  <h1 class="title"><small>BLIND BOX</small>20/11</h1>
+  <p class="sub">Kính mời Thủ trưởng và các đồng chí chạm vào màn hình để mở blind box!</p>
+
+  <div class="stage">
+    <div class="rays"></div>
+    <div class="floor"></div>
+    <div class="box">
+      <svg viewBox="0 0 170 175" aria-hidden="true">
+        <defs>
+          <linearGradient id="bd" x1="0" x2="1"><stop offset="0" stop-color="#FF2A55"/><stop offset=".55" stop-color="#EE0033"/><stop offset="1" stop-color="#B0002A"/></linearGradient>
+          <linearGradient id="ld" x1="0" x2="1"><stop offset="0" stop-color="#FF4D6E"/><stop offset="1" stop-color="#C8002B"/></linearGradient>
+          <linearGradient id="sv" x1="0" x2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset=".5" stop-color="#E3E5E9"/><stop offset="1" stop-color="#AEB2B9"/></linearGradient>
+        </defs>
+        <!-- thân hộp -->
+        <rect x="14" y="78" width="142" height="95" rx="6" fill="url(#bd)"/>
+        <rect x="14" y="78" width="142" height="12" fill="#000" opacity=".12"/>
+        <rect x="74" y="78" width="22" height="95" fill="url(#sv)"/>
+        <!-- nắp + nơ -->
+        <g class="lid">
+          <path d="M85 40 C60 6 30 18 46 38 C54 47 72 44 85 40Z" fill="url(#sv)"/>
+          <path d="M85 40 C110 6 140 18 124 38 C116 47 98 44 85 40Z" fill="url(#sv)"/>
+          <circle cx="85" cy="40" r="9" fill="#D7DADF"/>
+          <rect x="4" y="44" width="162" height="38" rx="7" fill="url(#ld)"/>
+          <rect x="72" y="44" width="26" height="38" fill="url(#sv)"/>
+          <rect x="4" y="44" width="162" height="6" rx="3" fill="#fff" opacity=".25"/>
+        </g>
+        <!-- dấu hỏi trên thân -->
+        <text x="44" y="142" font-family="Be Vietnam Pro,sans-serif" font-weight="900" font-size="34" fill="#fff" opacity=".9">?</text>
+        <text x="112" y="150" font-family="Be Vietnam Pro,sans-serif" font-weight="900" font-size="24" fill="#fff" opacity=".6">?</text>
+      </svg>
+    </div>
+  </div>
+
+  <div class="hint">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11V5a2 2 0 0 1 4 0v6"/><path d="M13 10a2 2 0 0 1 4 0v2a2 2 0 0 1 4 0v3a7 7 0 0 1-7 7h-1a7 7 0 0 1-6-3l-2.5-4a1.8 1.8 0 0 1 3-2L9 15"/></svg>
+    Mở blind box
+  </div>
+</div>
+
 <script>
-const v=document.getElementById('v'),t=document.getElementById('tap');
-t.onclick=()=>{v.muted=false;v.loop=false;v.currentTime=0;v.play();v.controls=true;t.remove();};
-</script></body></html>
+const v=document.getElementById('v'),s=document.getElementById('splash'),p=document.getElementById('player');
+let opened=false;
+function openBox(){
+  if(opened)return; opened=true;
+  // "mở khóa" video ngay trong lần chạm để điện thoại cho phép phát có tiếng,
+  // rồi dừng lại, đợi hiệu ứng mở hộp xong mới phát thật
+  v.muted=false;
+  const unlock=v.play();
+  if(unlock&&unlock.then)unlock.then(()=>{v.pause();v.currentTime=0;}).catch(()=>{});
+  s.classList.add('open'); p.classList.add('show');
+  confetti();
+  setTimeout(()=>{
+    v.currentTime=0;
+    const pr=v.play(); if(pr&&pr.catch)pr.catch(()=>{});
+    v.controls=true;
+  },1100);
+}
+function confetti(){
+  const r=s.querySelector('.box').getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height*.35;
+  const cols=['#EE0033','#FF4D6E','#C9CCD1','#FFFFFF','#A8001F'];
+  for(let i=0;i<36;i++){
+    const b=document.createElement('i');b.className='bit';
+    const a=Math.random()*Math.PI*2,d=120+Math.random()*180;
+    b.style.left=cx+'px';b.style.top=cy+'px';
+    b.style.background=cols[i%cols.length];
+    if(i%5===3)b.style.boxShadow='0 0 0 1px #D0D3D8';
+    b.style.setProperty('--x',Math.cos(a)*d+'px');
+    b.style.setProperty('--y',(Math.sin(a)*d-80)+'px');
+    b.style.setProperty('--r',(Math.random()*720-360)+'deg');
+    document.body.appendChild(b);setTimeout(()=>b.remove(),1400);
+  }
+}
+s.addEventListener('click',openBox);
+s.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openBox();}});
+</script>
+</body>
+</html>
